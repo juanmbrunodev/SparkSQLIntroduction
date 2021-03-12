@@ -34,6 +34,29 @@ public class SparkSQLIntroduction {
         //Display five first rows and inspect schema
         df.show();
 
+        //Create a temporary view
+        df.createOrReplaceTempView("rides");
+
+        //Select rides for 18 year old people or older
+        Dataset<Row> eighteenOldRides = session.sql(
+                "SELECT att_id,name,age_required FROM rides WHERE age_required >= 18"
+        );
+
+        //Display results
+        eighteenOldRides.show();
+
+        //Group by minimum age required per ride
+        Dataset<Row> ridesGrouping = session.sql(
+                "SELECT age_required, count(1) AS amount_rides FROM rides GROUP BY age_required "
+        );
+
+        //Display the execution plan prior to running the query
+        LOGGER.info("QUERY EXECUTION PLAN: " + ridesGrouping.queryExecution().simpleString());
+
+        //Display above results
+        ridesGrouping.show();
+
+
     }
 
 }
